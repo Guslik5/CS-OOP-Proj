@@ -45,6 +45,7 @@ public class IsuServiceTest
         var groupWithStudent2 = isuService.AddGroup(new GroupName("M2202"));
         var student1 = isuService.AddStudent(groupWithStudent1, "Vlad");
         var student2 = isuService.AddStudent(groupWithStudent2, "Artem");
+        groupWithStudent1.ListStudents.Clear();
 
         isuService.ChangeStudentGroup(student1, groupWithStudent2);
 

@@ -1,6 +1,7 @@
 ﻿namespace Isu.exceptions;
 
-public class GroupCreatedException
+public class GroupCreatedException : Exception
 {
-    
+    public GroupCreatedException(string message)
+        : base(message) { }
 }

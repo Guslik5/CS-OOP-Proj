@@ -10,11 +10,11 @@ public interface IIsuService
 
     Student GetStudent(int id);
     Student? FindStudent(int id);
-    List<Student> FindStudents(GroupName groupName);
+    IEnumerable<List<Student>> FindStudents(GroupName groupName);
     List<Student> FindStudents(CourseNumber courseNumber);
 
-    Group? FindGroup(GroupName groupName);
-    List<Group> FindGroups(CourseNumber courseNumber);
+    IEnumerable<Group>? FindGroup(GroupName groupName);
+    IEnumerable<Group> FindGroups(CourseNumber courseNumber);
 
     void ChangeStudentGroup(Student student, Group newGroup);
 }
