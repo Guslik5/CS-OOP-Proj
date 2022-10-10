@@ -6,11 +6,11 @@ namespace Isu.Services;
 
 public class IsuService : IIsuService
 {
-    private const int CoursePossitionInNameGroup = 2;
     private const int MaxCountOfStudents = 30;
     private readonly List<Group> _groups = new List<Group>();
     private int _id = 0;
 
+    public IEnumerable<Group> Groups => _groups;
     public Group AddGroup(GroupName name)
     {
         var group = new Group(name);
@@ -28,13 +28,13 @@ public class IsuService : IIsuService
         _id++;
         if (_groups.Contains(group))
         {
-            if (group.ListStudents.Count > MaxCountOfStudents)
+            if (group.ListStudents.Count() > MaxCountOfStudents)
             {
                 throw new MaxStudentExeption();
             }
 
             var student = new Student(group, name, _id);
-            group.ListStudents.Add(student);
+            group.Add(student);
             return student;
         }
 
@@ -43,7 +43,7 @@ public class IsuService : IIsuService
 
     public Student GetStudent(int id)
     {
-        var student = FindStudent(id);
+        Student student = FindStudent(id);
         if (student == null)
         {
             throw new StudentException("Student is not found! ");
@@ -52,8 +52,13 @@ public class IsuService : IIsuService
         return student;
     }
 
-    public Student? FindStudent(int id)
+    public Student FindStudent(int id)
     {
+        if (id < 1)
+        {
+            throw new IdStudentException();
+        }
+
         var desiredStudent = from p in _groups
             from a in p
             where a.ID.Equals(id)
@@ -62,11 +67,12 @@ public class IsuService : IIsuService
         return student;
     }
 
-    public IEnumerable<List<Student>> FindStudents(GroupName groupName)
+    public IEnumerable<Student> FindStudents(GroupName groupName)
     {
-        var desiredStudents = from p in _groups
-            where p.NameOfGroup.Equals(groupName)
-            select p.ListStudents;
+        var desiredStudents = from g in _groups
+            where g.NameOfGroup.Equals(groupName)
+            from s in g.ListStudents
+            select s;
         if (desiredStudents.Count() == 0)
         {
             throw new GroupNotFoundException("Error\n Students is not found: ", groupName.NameGroup);
@@ -90,29 +96,20 @@ public class IsuService : IIsuService
         return students.ToList();
     }
 
-    public Group? FindGroupold(GroupName groupName)
-    {
-        foreach (var group in _groups)
-        {
-            if (group.NameOfGroup.NameGroup == groupName.NameGroup)
-            {
-                return group;
-            }
-        }
-
-        return null;
-    }
-
-    public IEnumerable<Group>? FindGroup(GroupName groupName)
+    public List<Group> FindGroup(GroupName groupName)
     {
         var group = from p in _groups
             where p.NameOfGroup.NameGroup.Equals(groupName.NameGroup)
             select p;
+        if (group.Count() == 0)
+        {
+            throw new GroupNotFoundException("Group is not found: ", groupName.NameGroup);
+        }
 
-        return group;
+        return group.ToList();
     }
 
-    public IEnumerable<Group> FindGroups(CourseNumber courseNumber)
+    public List<Group> FindGroups(CourseNumber courseNumber)
     {
         var groups = from p in _groups
             where p.GetCourseGroup().Equals(courseNumber)
@@ -123,54 +120,20 @@ public class IsuService : IIsuService
             throw new CourseNumberGroupException();
         }
 
-        return groups;
-    }
-
-    public void ChangeStudentGroupold(Student student, Group newGroup)
-    {
-        var oldGroup = student.Group.NameGroup;
-        var flag = 0;
-        foreach (Group group in _groups)
-        {
-            if (group.NameOfGroup.NameGroup == newGroup.NameOfGroup.NameGroup)
-            {
-                var copyStudent = new Student(newGroup, student.NameOfStudent, student.ID);
-                newGroup.ListStudents.Add(copyStudent);
-                flag = 1;
-                break;
-            }
-        }
-
-        if (flag == 0)
-        {
-            throw new GroupNotFoundException("Error\n Group for student not found: ", newGroup.NameOfGroup.NameGroup);
-        }
-
-        foreach (Group group2 in _groups)
-        {
-            if (group2.NameOfGroup.NameGroup == oldGroup)
-            {
-                group2.ListStudents.Remove(student);
-                return;
-            }
-        }
-
-        // throw new GroupNotFoundException("Группа для студента не найдена: ", newGroup.NameOfGroup.NameGroup);
+        return groups.ToList();
     }
 
     public void ChangeStudentGroup(Student student, Group newGroup)
     {
-        var oldGroup = student.Group;
+        GroupName oldGroup = student.Group;
         if (_groups.Contains(newGroup) == false)
         {
             throw new GroupNotFoundException("Error\n Group for student not found: ", newGroup.NameOfGroup.NameGroup);
         }
 
         var copyStudent = new Student(newGroup, student.NameOfStudent, student.ID);
-        newGroup.ListStudents.Add(copyStudent);
-        var result = _groups.Single(s => s.NameOfGroup == oldGroup);
-        result.ListStudents.Remove(student);
-
-        // throw new GroupNotFoundException("Группа для студента не найдена: ", newGroup.NameOfGroup.NameGroup);
+        newGroup.Add(copyStudent);
+        Group result = _groups.Single(s => s.NameOfGroup == oldGroup);
+        result.Remove(student);
     }
 }

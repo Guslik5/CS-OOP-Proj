@@ -45,13 +45,9 @@ public class IsuServiceTest
         var groupWithStudent2 = isuService.AddGroup(new GroupName("M2202"));
         var student1 = isuService.AddStudent(groupWithStudent1, "Vlad");
         var student2 = isuService.AddStudent(groupWithStudent2, "Artem");
-        groupWithStudent1.ListStudents.Clear();
-
         isuService.ChangeStudentGroup(student1, groupWithStudent2);
 
-        Assert.Equal(2, groupWithStudent2.ListStudents.Count);
-        Assert.Equal("Artem", groupWithStudent2.ListStudents[0].NameOfStudent);
-        Assert.Equal("Vlad", groupWithStudent2.ListStudents[1].NameOfStudent);
-        Assert.True(groupWithStudent1.ListStudents.Count == 0);
+        Assert.Equal(2, groupWithStudent2.ListStudents.Count());
+        Assert.True(groupWithStudent1.ListStudents.Count() == 0);
     }
 }

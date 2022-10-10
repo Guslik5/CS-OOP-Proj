@@ -4,7 +4,7 @@ using Isu.Models;
 
 namespace Isu.Entities;
 
-public class Group : IEnumerable<Student>
+public class Group : IEnumerable<Student>, IEquatable<Group>
 {
     private const int MinGroupLenght = 5;
     private const int MaxGroupLenght = 5;
@@ -19,37 +19,18 @@ public class Group : IEnumerable<Student>
         NameOfGroup = group;
     }
 
-    public List<Student> ListStudents
-    {
-        get
-        {
-            return _listStudents;
-        }
-    }
+    public IEnumerable<Student> ListStudents => _listStudents;
 
     public GroupName NameOfGroup { get; }
 
-    public bool EquallyGroup(Group temp)
-    {
-        return this.NameOfGroup.NameGroup == temp.NameOfGroup.NameGroup;
-    }
-
-    /*
-    public static bool operator ==(Group one, Group two)
-    {
-        return one.NameOfGroup.NameGroup == two.NameOfGroup.NameGroup;
-    }
-
-    public static bool operator !=(Group one, Group two)
-    {
-        return !(one == two);
-    }
-    Error: 'Isu.Entities.Group' defines operator '==' or operator '!=' but does not override 'Object.Equals(object o)' and 'Object.GetHashCode()'
-    */
-
     public void Add(Student student)
     {
-        this.ListStudents.Add(student);
+        this._listStudents.Add(student);
+    }
+
+    public void Remove(Student student)
+    {
+        this._listStudents.Remove(student);
     }
 
     public CourseNumber GetCourseGroup()
@@ -65,5 +46,25 @@ public class Group : IEnumerable<Student>
     IEnumerator IEnumerable.GetEnumerator()
     {
         return GetEnumerator();
+    }
+
+    public bool Equals(Group other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return _listStudents.Equals(other._listStudents) && NameOfGroup.Equals(other.NameOfGroup);
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != this.GetType()) return false;
+        return Equals((Group)obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(_listStudents, NameOfGroup);
     }
 }
