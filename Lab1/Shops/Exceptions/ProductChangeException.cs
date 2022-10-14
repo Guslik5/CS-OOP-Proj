@@ -1,7 +1,7 @@
 ﻿namespace Shop.Exceptions;
 
-public class ProductChangeExceprion : Exception
+public class ProductChangeException : Exception
 {
-    public ProductChangeE(string message)
+    public ProductChangeException(string message)
         : base(message) { }
 }

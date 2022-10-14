@@ -1,10 +1,18 @@
-﻿namespace Shops.Models;
+﻿using Shop.Exceptions;
 
-public class ShopingList
+namespace Shop.Models;
+
+public class ProductForBuy
 {
-    public ShopingList(int countElement, Product product)
+    private const int MinCountProduct = 1;
+    public ProductForBuy(int countElement, Product product)
     {
         ArgumentNullException.ThrowIfNull(product, "Product is null");
+        if (countElement < MinCountProduct)
+        {
+            throw new ProductBuyException("invalid count of products");
+        }
+
         (CountElements, Product) = (countElement, product);
     }
 

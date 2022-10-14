@@ -1,6 +1,7 @@
-﻿namespace Shops.Exceptions;
+﻿namespace Shop.Exceptions;
 
-public class FindProductException
+public class FindProductException : Exception
 {
-    
+    public FindProductException(string message)
+        : base(message) { }
 }

@@ -1,6 +1,7 @@
-﻿namespace Shops.Exceptions;
+﻿namespace Shop.Exceptions;
 
-public class PriceProductException
+public class PriceProductException : Exception
 {
-    
+    public PriceProductException(string message)
+        : base(message) { }
 }

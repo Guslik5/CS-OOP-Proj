@@ -1,6 +1,7 @@
-﻿namespace Shops.Exceptions;
+﻿namespace Shop.Exceptions;
 
-public class PersonMoneyException
+public class PersonMoneyException : Exception
 {
-    
+    public PersonMoneyException(string message)
+        : base(message) { }
 }

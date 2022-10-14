@@ -1,6 +1,7 @@
-﻿namespace Shops.Exceptions;
+﻿namespace Shop.Exceptions;
 
-public class CountElementsException
+public class CountElementsException : Exception
 {
-    
+    public CountElementsException(string message)
+        : base(message) { }
 }
