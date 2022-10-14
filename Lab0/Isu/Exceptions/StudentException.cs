@@ -1,5 +1,4 @@
-﻿using Isu.Entities;
-namespace Isu.exceptions;
+﻿namespace Isu.Exceptions;
 
 public class StudentException : Exception
 {

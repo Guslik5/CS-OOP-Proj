@@ -1,5 +1,5 @@
 ﻿using Isu.Entities;
-using Isu.exceptions;
+using Isu.Exceptions;
 using Isu.Models;
 
 namespace Isu.Services;
@@ -59,21 +59,22 @@ public class IsuService : IIsuService
             throw new IdStudentException();
         }
 
-        var desiredStudent = from p in _groups
-            from a in p
-            where a.ID.Equals(id)
-            select a;
-        Student student = desiredStudent.First();
-        return student;
+        var allStudents = _groups.SelectMany(d => d.ListStudents).ToList();
+        var findStudent = allStudents.Where(p => p.ID.Equals(id));
+        if (!findStudent.Any())
+        {
+            throw new StudentException("Student not found");
+        }
+
+        return findStudent.First();
     }
 
     public IEnumerable<Student> FindStudents(GroupName groupName)
     {
-        var desiredStudents = from g in _groups
-            where g.NameOfGroup.Equals(groupName)
-            from s in g.ListStudents
-            select s;
-        if (desiredStudents.Count() == 0)
+        var desiredStudents = _groups.SelectMany(s => s.ListStudents).
+            Where(s => s.Group.NameOfGroup.Equals(groupName));
+
+        if (!desiredStudents.Any())
         {
             throw new GroupNotFoundException("Error\n Students is not found: ", groupName.NameGroup);
         }
@@ -84,9 +85,7 @@ public class IsuService : IIsuService
     public List<Student> FindStudents(CourseNumber courseNumber)
     {
         var groups = FindGroups(courseNumber);
-        var students = from p in groups
-            from a in p.ListStudents
-            select a;
+        var students = groups.SelectMany(p => p.ListStudents);
 
         if (students.Count() == 0)
         {
@@ -98,9 +97,7 @@ public class IsuService : IIsuService
 
     public List<Group> FindGroup(GroupName groupName)
     {
-        var group = from p in _groups
-            where p.NameOfGroup.NameGroup.Equals(groupName.NameGroup)
-            select p;
+        var group = _groups.Where(g => g.NameOfGroup.NameGroup.Equals(groupName.NameGroup));
         if (group.Count() == 0)
         {
             throw new GroupNotFoundException("Group is not found: ", groupName.NameGroup);
@@ -111,11 +108,9 @@ public class IsuService : IIsuService
 
     public List<Group> FindGroups(CourseNumber courseNumber)
     {
-        var groups = from p in _groups
-            where p.GetCourseGroup().Equals(courseNumber)
-            select p;
+        var groups = _groups.Where(g => g.GetCourseGroup().Equals(courseNumber));
 
-        if (groups.Count() == 0)
+        if (!groups.Any())
         {
             throw new CourseNumberGroupException();
         }
@@ -125,15 +120,14 @@ public class IsuService : IIsuService
 
     public void ChangeStudentGroup(Student student, Group newGroup)
     {
-        GroupName oldGroup = student.Group;
-        if (_groups.Contains(newGroup) == false)
+        Group oldGroup = student.Group;
+        if (!_groups.Contains(newGroup))
         {
             throw new GroupNotFoundException("Error\n Group for student not found: ", newGroup.NameOfGroup.NameGroup);
         }
 
         var copyStudent = new Student(newGroup, student.NameOfStudent, student.ID);
         newGroup.Add(copyStudent);
-        Group result = _groups.Single(s => s.NameOfGroup == oldGroup);
-        result.Remove(student);
+        oldGroup.Remove(student);
     }
 }

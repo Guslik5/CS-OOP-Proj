@@ -1,5 +1,4 @@
-using Isu.Entities;
-using Isu.exceptions;
+using Isu.Exceptions;
 using Isu.Models;
 using Isu.Services;
 using Xunit;
@@ -8,27 +7,28 @@ namespace Isu.Test;
 
 public class IsuServiceTest
 {
+    private const int MaxCountOfStudents = 30;
+    private IsuService _isuServise = new IsuService();
+
     [Fact]
     public void AddStudentToGroup_StudentHasGroupAndGroupContainsStudent()
     {
-        var isuServise = new IsuService();
-        var group = isuServise.AddGroup(new GroupName("M1101"));
-        var student = isuServise.AddStudent(group, "Sveta");
+        var group = _isuServise.AddGroup(new GroupName("M1101"));
+        var student = _isuServise.AddStudent(group, "Sveta");
         Assert.Contains(student, group.ListStudents);
-        Assert.True(group.NameOfGroup.NameGroup == student.Group.NameGroup);
+        Assert.Equal(group, student.Group);
     }
 
     [Fact]
     public void ReachMaxStudentPerGroup_ThrowException()
     {
-        var isuServise = new IsuService();
-        var group = isuServise.AddGroup(new GroupName("M1101"));
-        for (int i = 0; i <= 30; i++)
+        var group = _isuServise.AddGroup(new GroupName("M1101"));
+        for (int i = 0; i <= MaxCountOfStudents; i++)
         {
-            var student = isuServise.AddStudent(group, "student" + i.ToString());
+            var student = _isuServise.AddStudent(group, "student" + i.ToString());
         }
 
-        Assert.Throws<MaxStudentExeption>(() => isuServise.AddStudent(group, "studentlast"));
+        Assert.Throws<MaxStudentExeption>(() => _isuServise.AddStudent(group, "studentlast"));
     }
 
     [Fact]
@@ -40,14 +40,24 @@ public class IsuServiceTest
     [Fact]
     public void TransferStudentToAnotherGroup_GroupChanged()
     {
-        var isuService = new IsuService();
-        var groupWithStudent1 = isuService.AddGroup(new GroupName("M1101"));
-        var groupWithStudent2 = isuService.AddGroup(new GroupName("M2202"));
-        var student1 = isuService.AddStudent(groupWithStudent1, "Vlad");
-        var student2 = isuService.AddStudent(groupWithStudent2, "Artem");
-        isuService.ChangeStudentGroup(student1, groupWithStudent2);
+        var groupWithStudent1 = _isuServise.AddGroup(new GroupName("M1101"));
+        var groupWithStudent2 = _isuServise.AddGroup(new GroupName("M2202"));
+        var student1 = _isuServise.AddStudent(groupWithStudent1, "Vlad");
+        var student2 = _isuServise.AddStudent(groupWithStudent2, "Artem");
+        _isuServise.ChangeStudentGroup(student1, groupWithStudent2);
 
         Assert.Equal(2, groupWithStudent2.ListStudents.Count());
-        Assert.True(groupWithStudent1.ListStudents.Count() == 0);
+        Assert.True(!groupWithStudent1.ListStudents.Any());
+    }
+
+    [Fact]
+    public void FindStudentId()
+    {
+        var group = _isuServise.AddGroup(new GroupName("M1101"));
+        var student1 = _isuServise.AddStudent(group, "Sveta");
+        var student2 = _isuServise.AddStudent(group, "Andrey");
+        var student3 = _isuServise.AddStudent(group, "Artem");
+        var findStudent = _isuServise.FindStudent(2);
+        Assert.Equal("Andrey", findStudent.NameOfStudent);
     }
 }

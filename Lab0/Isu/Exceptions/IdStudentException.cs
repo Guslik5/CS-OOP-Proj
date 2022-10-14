@@ -1,4 +1,4 @@
-﻿namespace Isu.exceptions;
+﻿namespace Isu.Exceptions;
 
 public class IdStudentException : Exception
 {

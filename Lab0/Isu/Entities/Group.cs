@@ -1,17 +1,18 @@
 using System.Collections;
-using Isu.exceptions;
+using Isu.Exceptions;
 using Isu.Models;
 
 namespace Isu.Entities;
 
-public class Group : IEnumerable<Student>, IEquatable<Group>
+public class Group : IEquatable<Group>
 {
-    private const int MinGroupLenght = 5;
-    private const int MaxGroupLenght = 5;
+    private const int MinGroupLength = 5;
+    private const int MaxGroupLength = 6;
+    private const int MaxStudentInGroup = 30;
     private readonly List<Student> _listStudents = new List<Student>();
     public Group(GroupName group)
     {
-        if (group.NameGroup.Length < MinGroupLenght ^ group.NameGroup.Length > MaxGroupLenght)
+        if (group.NameGroup.Length > MaxGroupLength || group.NameGroup.Length < MinGroupLength)
         {
             throw new GroupNameExceptions("Error\n incorrect group name", group.NameGroup);
         }
@@ -25,6 +26,11 @@ public class Group : IEnumerable<Student>, IEquatable<Group>
 
     public void Add(Student student)
     {
+        if (_listStudents.Count() > MaxStudentInGroup)
+        {
+            throw new MaxStudentExeption();
+        }
+
         this._listStudents.Add(student);
     }
 
@@ -36,16 +42,6 @@ public class Group : IEnumerable<Student>, IEquatable<Group>
     public CourseNumber GetCourseGroup()
     {
         return new CourseNumber(this.NameOfGroup);
-    }
-
-    public IEnumerator<Student> GetEnumerator()
-    {
-        throw new NotImplementedException();
-    }
-
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
     }
 
     public bool Equals(Group other)

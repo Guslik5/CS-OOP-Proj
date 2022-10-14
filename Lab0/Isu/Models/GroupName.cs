@@ -1,4 +1,4 @@
-using Isu.exceptions;
+using Isu.Exceptions;
 namespace Isu.Models;
 
 public class GroupName
@@ -14,7 +14,7 @@ public class GroupName
             throw new GroupNameExceptions("Error\n Incorrect group name: ", nameofgroup);
         }
 
-        if (Convert.ToInt32(new string(nameofgroup[CoursePossitionInNameGroup], 1)) > MaxCourseNumber)
+        if ((nameofgroup[CoursePossitionInNameGroup] - '0') > MaxCourseNumber)
         {
             throw new GroupNameExceptions("Error\n Incorrect group name\n Incorrect course: ", nameofgroup);
         }

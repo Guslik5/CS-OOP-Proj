@@ -1,4 +1,4 @@
-using Isu.exceptions;
+using Isu.Exceptions;
 
 namespace Isu.Models;
 

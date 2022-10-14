@@ -1,4 +1,4 @@
-using Isu.exceptions;
+using Isu.Exceptions;
 using Isu.Models;
 
 namespace Isu.Entities;
@@ -7,10 +7,15 @@ public class Student
 {
     public Student(Group group, string nameOfStudent, int id)
     {
-        (Group, NameOfStudent, ID) = (group.NameOfGroup, nameOfStudent, id);
+        if (group == null || nameOfStudent == null)
+        {
+            throw new StudentException("Error Student name or Student Group");
+        }
+
+        (Group, NameOfStudent, ID) = (group, nameOfStudent, id);
     }
 
-    public GroupName Group { get; }
+    public Group Group { get; }
 
     public string NameOfStudent { get; }
     public int ID { get; }
