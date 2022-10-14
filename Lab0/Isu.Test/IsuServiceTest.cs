@@ -11,6 +11,20 @@ public class IsuServiceTest
     private IsuService _isuServise = new IsuService();
 
     [Fact]
+    public void MyTest()
+    {
+        var group1 = _isuServise.AddGroup(new GroupName("M1101"));
+        var group2 = _isuServise.AddGroup(new GroupName("M1102"));
+        var student1 = _isuServise.AddStudent(group1, "Sveta");
+        var student2 = _isuServise.AddStudent(group2, "Andrey");
+        var findStudentCourse = _isuServise.FindStudents(new CourseNumber(group1.NameOfGroup));
+        Assert.True(findStudentCourse[1].NameOfStudent == "Andrey");
+        var findStudents = _isuServise.FindStudents(group2.NameOfGroup).ToList();
+        Assert.True(findStudents[0].NameOfStudent == "Andrey");
+        Assert.True(_isuServise.FindStudent(2).NameOfStudent == "Andrey");
+    }
+
+    [Fact]
     public void AddStudentToGroup_StudentHasGroupAndGroupContainsStudent()
     {
         var group = _isuServise.AddGroup(new GroupName("M1101"));

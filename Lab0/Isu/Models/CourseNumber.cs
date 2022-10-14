@@ -9,12 +9,12 @@ public class CourseNumber
     private const int MinCourse = 1;
     public CourseNumber(GroupName name)
     {
-        if (name.NameGroup[CoursePossitionInNameGroup] > MaxCourse || name.NameGroup[CoursePossitionInNameGroup] < MinCourse)
+        if ((name.NameGroup[CoursePossitionInNameGroup] - '0') >= MaxCourse | (name.NameGroup[CoursePossitionInNameGroup] - '0') < MinCourse)
         {
-            throw new CourseException("Error \nCourseNumver");
+            throw new CourseException("Error \nCourseNumber");
         }
 
-        CourseOfNumber = name.NameGroup[CoursePossitionInNameGroup];
+        CourseOfNumber = name.NameGroup[CoursePossitionInNameGroup] - '0';
     }
 
     public int CourseOfNumber { get; }

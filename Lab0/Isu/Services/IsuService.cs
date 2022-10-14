@@ -108,7 +108,7 @@ public class IsuService : IIsuService
 
     public List<Group> FindGroups(CourseNumber courseNumber)
     {
-        var groups = _groups.Where(g => g.GetCourseGroup().Equals(courseNumber));
+        var groups = _groups.Where(g => (g.NameOfGroup.NameGroup[2] - '0').Equals(courseNumber.CourseOfNumber));
 
         if (!groups.Any())
         {
