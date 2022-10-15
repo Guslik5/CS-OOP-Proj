@@ -1,11 +1,11 @@
 ﻿namespace Shop.Models;
 
-public class Adress
+public class Address
 {
-    public Adress(string adress)
+    public Address(string address)
     {
-        NameAdress = adress;
+        NameAddress = address;
     }
 
-    public string NameAdress { get; }
+    public string NameAddress { get; }
 }

@@ -8,18 +8,17 @@ namespace Shop.Entities;
 public class Shops : IEquatable<Shops>
 {
     private readonly List<ElementProductShop> _productsShop = new List<ElementProductShop>();
-    internal Shops(string nameShop, Adress adressShop)
+    internal Shops(string nameShop, Address adressShop)
     {
         NameShop = nameShop;
         AdressShop = adressShop;
         GuidShop = Guid.NewGuid();
     }
 
-    public List<ElementProductShop> ProductsShop => _productsShop;
-
     public string NameShop { get; }
-    public Adress AdressShop { get; }
+    public Address AdressShop { get; }
     public Guid GuidShop { get; }
+    public IReadOnlyCollection<ElementProductShop> ProductsShop => _productsShop;
 
     public bool Equals(Shops other)
     {
@@ -46,26 +45,24 @@ public class Shops : IEquatable<Shops>
         if (!_productsShop.Any())
         {
             _productsShop.Add(new ElementProductShop(quantity, product));
+            return;
         }
-        else
+
+        var result = _productsShop.Where(p => p.Product.Equals(product));
+        if (!result.Any())
         {
-            var result = _productsShop.Where(p => p.Product.Equals(product));
-            if (!result.Any())
+            _productsShop.Add(new ElementProductShop(quantity, product));
+            return;
+        }
+
+        foreach (ElementProductShop elementProductShop in _productsShop)
+        {
+            if (elementProductShop.Product.Equals(product))
             {
-                _productsShop.Add(new ElementProductShop(quantity, product));
-            }
-            else
-            {
-                foreach (ElementProductShop elementProductShop in _productsShop)
-                {
-                    if (elementProductShop.Product.Equals(product))
-                    {
-                        var oldQuantity = elementProductShop.CountElements;
-                        _productsShop.Remove(elementProductShop);
-                        _productsShop.Add(new ElementProductShop(quantity + oldQuantity, product));
-                        break;
-                    }
-                }
+                var oldQuantity = elementProductShop.CountElements;
+                _productsShop.Remove(elementProductShop);
+                _productsShop.Add(new ElementProductShop(quantity + oldQuantity, product));
+                break;
             }
         }
     }

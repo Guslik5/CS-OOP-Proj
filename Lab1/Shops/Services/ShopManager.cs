@@ -7,9 +7,9 @@ public class ShopManager : IShopManager
 {
     private readonly List<Shops> _listShops = new List<Shops>();
 
-    public List<Shops> ListShops => _listShops;
+    private List<Shops> ListShops => _listShops;
 
-    public Shops CreateShop(string shopName, Adress adress)
+    public Shops CreateShop(string shopName, Address adress)
     {
         ArgumentNullException.ThrowIfNull(adress, "Adress is null");
         var newshop = new Shops(shopName, adress);
@@ -27,15 +27,14 @@ public class ShopManager : IShopManager
     public decimal ChepestProductPrice(Product product)
     {
         return _listShops.Where(shop => shop.FindProduct(product) != null)
-            .OrderBy(shop => shop.FindProduct(product).PriceProduct)
-            .Min(shops => shops.FindProduct(product).PriceProduct);
+            .MinBy(shops => shops.FindProduct(product).PriceProduct)
+            .FindProduct(product).PriceProduct;
     }
 
     public Shops СheapestProductShop(Product product)
     {
         var resultPrice = ChepestProductPrice(product);
-        var resultShop = _listShops.Where(shops => shops.FindProduct(product).
-            PriceProduct.Equals(resultPrice)).First();
-        return resultShop;
+        return _listShops.FirstOrDefault(shops => shops.FindProduct(product).
+            PriceProduct.Equals(resultPrice));
     }
 }
