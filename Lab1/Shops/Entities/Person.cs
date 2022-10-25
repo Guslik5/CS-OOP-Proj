@@ -1,6 +1,6 @@
 ﻿using Shop.Exceptions;
 
-namespace Shop.Entities;
+namespace Shops.Entities;
 
 public class Person
 {

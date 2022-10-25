@@ -18,7 +18,6 @@ public class Product : IEquatable<Product>
     }
 
     public string NameProduct { get; }
-
     public Guid GuidProduct { get; }
     public decimal PriceProduct { get; private set; }
 

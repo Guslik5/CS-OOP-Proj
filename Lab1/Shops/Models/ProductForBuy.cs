@@ -5,6 +5,7 @@ namespace Shop.Models;
 public class ProductForBuy
 {
     private const int MinCountProduct = 1;
+
     public ProductForBuy(int countElement, Product product)
     {
         ArgumentNullException.ThrowIfNull(product, "Product is null");

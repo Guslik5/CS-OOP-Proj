@@ -1,23 +1,27 @@
-﻿using Shop.Entities;
+﻿using Shop.Exceptions;
 using Shop.Models;
+using Shops.Entities;
 
 namespace Shop.Services;
 
 public class ShopManager : IShopManager
 {
-    private readonly List<Shops> _listShops = new List<Shops>();
+    private readonly List<Shops.Entities.Shop> _listShops = new List<Shops.Entities.Shop>();
 
-    private List<Shops> ListShops => _listShops;
-
-    public Shops CreateShop(string shopName, Address adress)
+    public Shops.Entities.Shop CreateShop(string shopName, Address address)
     {
-        ArgumentNullException.ThrowIfNull(adress, "Adress is null");
-        var newshop = new Shops(shopName, adress);
+        ArgumentNullException.ThrowIfNull(address, "Address is null");
+        if (_listShops.Any(s => s.NameShop == shopName & s.AddressShop == address))
+        {
+            throw new ShopException("Shop has been added");
+        }
+
+        var newshop = new Shops.Entities.Shop(shopName, address);
         _listShops.Add(newshop);
         return newshop;
     }
 
-    public Shops FindShop(Shops shop)
+    public Shops.Entities.Shop FindShop(Shops.Entities.Shop shop)
     {
         ArgumentNullException.ThrowIfNull(shop, "Shop is null");
         var result = _listShops.FirstOrDefault(s => s.Equals(shop));
@@ -31,10 +35,9 @@ public class ShopManager : IShopManager
             .FindProduct(product).PriceProduct;
     }
 
-    public Shops СheapestProductShop(Product product)
+    public Shops.Entities.Shop СheapestProductShop(Product product)
     {
-        var resultPrice = ChepestProductPrice(product);
-        return _listShops.FirstOrDefault(shops => shops.FindProduct(product).
-            PriceProduct.Equals(resultPrice));
+        return _listShops.Where(shop => shop.FindProduct(product) != null)
+            .MinBy(shops => shops.FindProduct(product).PriceProduct);
     }
 }

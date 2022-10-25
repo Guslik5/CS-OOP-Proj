@@ -1,30 +1,28 @@
-﻿using System.Net.Sockets;
-using Microsoft.VisualBasic;
-using Shop.Exceptions;
+﻿using Shop.Exceptions;
 using Shop.Models;
 
-namespace Shop.Entities;
+namespace Shops.Entities;
 
-public class Shops : IEquatable<Shops>
+public class Shop : IEquatable<Shop>
 {
     private readonly List<ElementProductShop> _productsShop = new List<ElementProductShop>();
-    internal Shops(string nameShop, Address adressShop)
+    internal Shop(string nameShop, Address addressShop)
     {
         NameShop = nameShop;
-        AdressShop = adressShop;
+        AddressShop = addressShop;
         GuidShop = Guid.NewGuid();
     }
 
     public string NameShop { get; }
-    public Address AdressShop { get; }
+    public Address AddressShop { get; }
     public Guid GuidShop { get; }
     public IReadOnlyCollection<ElementProductShop> ProductsShop => _productsShop;
 
-    public bool Equals(Shops other)
+    public bool Equals(Shop other)
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
-        return _productsShop.Equals(other._productsShop) && NameShop == other.NameShop && AdressShop.Equals(other.AdressShop) && GuidShop.Equals(other.GuidShop);
+        return _productsShop.Equals(other._productsShop) && NameShop == other.NameShop && AddressShop.Equals(other.AddressShop) && GuidShop.Equals(other.GuidShop);
     }
 
     public override bool Equals(object obj)
@@ -32,12 +30,12 @@ public class Shops : IEquatable<Shops>
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != this.GetType()) return false;
-        return Equals((Shops)obj);
+        return Equals((Shop)obj);
     }
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(_productsShop, NameShop, AdressShop, GuidShop);
+        return HashCode.Combine(_productsShop, NameShop, AddressShop, GuidShop);
     }
 
     public void AddProducts(Product product, int quantity)
@@ -116,16 +114,25 @@ public class Shops : IEquatable<Shops>
     {
         ArgumentNullException.ThrowIfNull(person, "Person is null");
         ArgumentNullException.ThrowIfNull(productsBuy, "Products for buy is null");
-        foreach (var product in productsBuy)
+        var personMoney = person.Money;
+        try
         {
-            this.BuyProduct(person, product.CountElements, product.Product);
+            foreach (var product in productsBuy)
+            {
+                this.BuyProduct(person, product.CountElements, product.Product);
+            }
+        }
+        catch (Exception)
+        {
+            person.Money = personMoney;
+            throw new BuyProductsException("Person doesn't have money for all product");
         }
     }
 
     public Product FindProduct(Product product)
     {
         ArgumentNullException.ThrowIfNull(product, "Product for find is null");
-        var findProduct = _productsShop.FirstOrDefault(a => a.Product.NameProduct.Equals(product.NameProduct));
-        return findProduct.Product;
+        var findProduct = _productsShop.FirstOrDefault(a => a.Product.Equals(product));
+        return findProduct?.Product;
     }
 }
