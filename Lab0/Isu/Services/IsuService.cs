@@ -25,14 +25,14 @@ public class IsuService : IIsuService
 
     public Student AddStudent(Group group, string name)
     {
+        if (group.ListStudents.Count() > MaxCountOfStudents)
+        {
+            throw new MaxStudentExeption();
+        }
+
         _id++;
         if (_groups.Contains(group))
         {
-            if (group.ListStudents.Count() > MaxCountOfStudents)
-            {
-                throw new MaxStudentExeption();
-            }
-
             var student = new Student(group, name, _id);
             group.Add(student);
             return student;
@@ -73,12 +73,6 @@ public class IsuService : IIsuService
     {
         var desiredStudents = _groups.SelectMany(s => s.ListStudents).
             Where(s => s.Group.NameOfGroup.Equals(groupName));
-
-        if (!desiredStudents.Any())
-        {
-            throw new GroupNotFoundException("Error\n Students is not found: ", groupName.NameGroup);
-        }
-
         return desiredStudents;
     }
 
@@ -89,7 +83,7 @@ public class IsuService : IIsuService
 
         if (students.Count() == 0)
         {
-            throw new CourseNumberStudentExeption();
+            throw new CourseNumberStudentExeption("There are no students of such a course");
         }
 
         return students.ToList();
@@ -108,7 +102,12 @@ public class IsuService : IIsuService
 
     public List<Group> FindGroups(CourseNumber courseNumber)
     {
-        var groups = _groups.Where(g => (g.NameOfGroup.NameGroup[2] - '0').Equals(courseNumber.CourseOfNumber));
+        if (courseNumber.CourseOfNumber > 4 | courseNumber.CourseOfNumber < 0)
+        {
+            throw new CourseException("Invalid coursenumber");
+        }
+
+        var groups = _groups.Where(g => int.Parse(g.NameOfGroup.NameGroup[2].ToString()).Equals(courseNumber.CourseOfNumber));
 
         if (!groups.Any())
         {

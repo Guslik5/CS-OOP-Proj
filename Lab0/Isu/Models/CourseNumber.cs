@@ -9,7 +9,8 @@ public class CourseNumber
     private const int MinCourse = 1;
     public CourseNumber(GroupName name)
     {
-        if ((name.NameGroup[CoursePossitionInNameGroup] - '0') >= MaxCourse | (name.NameGroup[CoursePossitionInNameGroup] - '0') < MinCourse)
+        var courseNumber = name.NameGroup[CoursePossitionInNameGroup] - '0';
+        if (courseNumber >= MaxCourse | courseNumber < MinCourse)
         {
             throw new CourseException("Error \nCourseNumber");
         }
