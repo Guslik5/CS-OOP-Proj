@@ -39,6 +39,11 @@ public class Group : IEquatable<Group>
         this._listStudents.Remove(student);
     }
 
+    public CourseNumber GetCourseGroup()
+    {
+        return new CourseNumber(this.NameOfGroup);
+    }
+
     public bool Equals(Group other)
     {
         if (ReferenceEquals(null, other)) return false;

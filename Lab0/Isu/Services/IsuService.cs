@@ -73,6 +73,12 @@ public class IsuService : IIsuService
     {
         var desiredStudents = _groups.SelectMany(s => s.ListStudents).
             Where(s => s.Group.NameOfGroup.Equals(groupName));
+
+        if (!desiredStudents.Any())
+        {
+            throw new GroupNotFoundException("Error\n Students is not found: ", groupName.NameGroup);
+        }
+
         return desiredStudents;
     }
 
