@@ -12,6 +12,11 @@ public class Student
             throw new StudentException("Error Student name or Student Group");
         }
 
+        if (id < 0)
+        {
+            throw new IdException("Invalid ID student");
+        }
+
         (Group, NameOfStudent, ID) = (group, nameOfStudent, id);
     }
 
