@@ -1,4 +1,4 @@
-﻿namespace Shop.Exceptions;
+﻿namespace Shops.Exceptions;
 
 public class ProductChangeException : Exception
 {

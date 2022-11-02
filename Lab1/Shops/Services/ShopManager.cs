@@ -1,14 +1,14 @@
-﻿using Shop.Exceptions;
-using Shop.Models;
-using Shops.Entities;
+﻿using Shops.Entities;
+using Shops.Exceptions;
+using Shops.Models;
 
-namespace Shop.Services;
+namespace Shops.Services;
 
 public class ShopManager : IShopManager
 {
-    private readonly List<Shops.Entities.Shop> _listShops = new List<Shops.Entities.Shop>();
+    private readonly List<Shop> _listShops = new List<Shops.Entities.Shop>();
 
-    public Shops.Entities.Shop CreateShop(string shopName, Address address)
+    public Shop CreateShop(string shopName, Address address)
     {
         ArgumentNullException.ThrowIfNull(address, "Address is null");
         if (_listShops.Any(s => s.NameShop == shopName & s.AddressShop == address))
@@ -16,12 +16,12 @@ public class ShopManager : IShopManager
             throw new ShopException("Shop has been added");
         }
 
-        var newshop = new Shops.Entities.Shop(shopName, address);
+        var newshop = new Shop(shopName, address);
         _listShops.Add(newshop);
         return newshop;
     }
 
-    public Shops.Entities.Shop FindShop(Shops.Entities.Shop shop)
+    public Shop FindShop(Shops.Entities.Shop shop)
     {
         ArgumentNullException.ThrowIfNull(shop, "Shop is null");
         var result = _listShops.FirstOrDefault(s => s.Equals(shop));
@@ -35,7 +35,7 @@ public class ShopManager : IShopManager
             .FindProduct(product).PriceProduct;
     }
 
-    public Shops.Entities.Shop СheapestProductShop(Product product)
+    public Shop СheapestProductShop(Product product)
     {
         return _listShops.Where(shop => shop.FindProduct(product) != null)
             .MinBy(shops => shops.FindProduct(product).PriceProduct);

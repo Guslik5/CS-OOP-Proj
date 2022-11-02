@@ -1,4 +1,4 @@
-﻿using Shop.Exceptions;
+﻿using Shops.Exceptions;
 
 namespace Shops.Entities;
 

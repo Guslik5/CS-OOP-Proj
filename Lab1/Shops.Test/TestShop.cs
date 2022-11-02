@@ -1,7 +1,7 @@
-﻿using Shop.Exceptions;
-using Shop.Models;
-using Shop.Services;
-using Shops.Entities;
+﻿using Shops.Entities;
+using Shops.Exceptions;
+using Shops.Models;
+using Shops.Services;
 using Xunit;
 namespace Shop.Test;
 
@@ -53,11 +53,11 @@ public class ShopTest
         shop.AddProducts(_product1, 7);
         shop.AddProducts(_product2, 5);
         shop.AddProducts(_product3, 3);
-        List<ProductForBuy> shopingList = new List<ProductForBuy>();
-        var productBuy1 = new ProductForBuy(20, _product1);
-        var productBuy2 = new ProductForBuy(2, _product2);
-        shopingList.Add(productBuy1);
-        shopingList.Add(productBuy2);
+        var shopingList = new List<ProductForBuy>()
+        {
+            new ProductForBuy(8, _product1),
+            new ProductForBuy(10, _product2),
+        };
         Assert.Throws<BuyProductsException>(() => shop.BuyProducts(_person1, shopingList));
     }
 

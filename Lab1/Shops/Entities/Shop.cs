@@ -1,5 +1,5 @@
-﻿using Shop.Exceptions;
-using Shop.Models;
+﻿using Shops.Exceptions;
+using Shops.Models;
 
 namespace Shops.Entities;
 

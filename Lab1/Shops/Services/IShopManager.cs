@@ -1,14 +1,15 @@
-﻿using Shop.Models;
+﻿using Shops.Entities;
+using Shops.Models;
 
-namespace Shop.Services;
+namespace Shops.Services;
 
 public interface IShopManager
 {
-    Shops.Entities.Shop CreateShop(string shopName, Address address);
+    Shop CreateShop(string shopName, Address address);
 
-    Shops.Entities.Shop FindShop(Shops.Entities.Shop shop);
+    Shop FindShop(Shops.Entities.Shop shop);
 
     decimal ChepestProductPrice(Product product);
 
-    Shops.Entities.Shop СheapestProductShop(Product product);
+    Shop СheapestProductShop(Product product);
 }

@@ -1,6 +1,6 @@
-﻿using Shop.Exceptions;
+﻿using Shops.Exceptions;
 
-namespace Shop.Models;
+namespace Shops.Models;
 
 public class ProductForBuy
 {
