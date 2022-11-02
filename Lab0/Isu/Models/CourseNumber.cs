@@ -12,7 +12,7 @@ public class CourseNumber
         var courseNumber = name.NameGroup[CoursePossitionInNameGroup] - '0';
         if (courseNumber >= MaxCourse | courseNumber < MinCourse)
         {
-            throw new CourseException("Error \nCourseNumber");
+            throw new CourseInvalidException("Error \nCourseNumber");
         }
 
         CourseOfNumber = name.NameGroup[CoursePossitionInNameGroup] - '0';

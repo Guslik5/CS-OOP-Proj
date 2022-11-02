@@ -18,7 +18,7 @@ public class IsuServiceTest
         var student1 = _isuService.AddStudent(group1, "Sveta");
         var student2 = _isuService.AddStudent(group2, "Andrey");
         var findStudentCourse = _isuService.FindStudents(new CourseNumber(group1.NameOfGroup));
-        Assert.True(findStudentCourse[1].NameOfStudent == "Andrey");
+        Assert.Equal("Andrey", findStudentCourse[1].NameOfStudent);
         var findStudents = _isuService.FindStudents(group2.NameOfGroup).ToList();
         Assert.Equal("Andrey", findStudents[0].NameOfStudent);
         Assert.Equal("Andrey", _isuService.FindStudent(2).NameOfStudent);

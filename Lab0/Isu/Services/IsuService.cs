@@ -44,12 +44,8 @@ public class IsuService : IIsuService
     public Student GetStudent(int id)
     {
         Student student = FindStudent(id);
-        if (student == null)
-        {
-            throw new StudentException("Student is not found! ");
-        }
 
-        return student;
+        return student ?? throw new StudentException("Student is not found! ");
     }
 
     public Student FindStudent(int id)
@@ -60,6 +56,7 @@ public class IsuService : IIsuService
         }
 
         var allStudents = _groups.SelectMany(d => d.ListStudents).ToList();
+
         var findStudent = allStudents.Where(p => p.ID.Equals(id));
         if (!findStudent.Any())
         {
@@ -69,10 +66,10 @@ public class IsuService : IIsuService
         return findStudent.First();
     }
 
-    public IEnumerable<Student> FindStudents(GroupName groupName)
+    public List<Student> FindStudents(GroupName groupName)
     {
         var desiredStudents = _groups.SelectMany(s => s.ListStudents).
-            Where(s => s.Group.NameOfGroup.Equals(groupName));
+            Where(s => s.Group.NameOfGroup.Equals(groupName)).ToList();
 
         if (!desiredStudents.Any())
         {
@@ -85,32 +82,27 @@ public class IsuService : IIsuService
     public List<Student> FindStudents(CourseNumber courseNumber)
     {
         var groups = FindGroups(courseNumber);
-        var students = groups.SelectMany(p => p.ListStudents);
+        var students = groups.SelectMany(p => p.ListStudents).ToList();
 
-        if (students.Count() == 0)
+        if (!students.Any())
         {
             throw new CourseNumberStudentExeption("There are no students of such a course");
         }
 
-        return students.ToList();
+        return students;
     }
 
-    public List<Group> FindGroup(GroupName groupName)
+    public Group FindGroup(GroupName groupName)
     {
-        var group = _groups.Where(g => g.NameOfGroup.NameGroup.Equals(groupName.NameGroup));
-        if (group.Count() == 0)
-        {
-            throw new GroupNotFoundException("Group is not found: ", groupName.NameGroup);
-        }
-
-        return group.ToList();
+        Group group = _groups.Where(g => g.NameOfGroup.NameGroup.Equals(groupName.NameGroup)).FirstOrDefault();
+        return group ?? throw new GroupNotFoundException("Group is not found: ", groupName.NameGroup);
     }
 
     public List<Group> FindGroups(CourseNumber courseNumber)
     {
         if (courseNumber.CourseOfNumber > 4 | courseNumber.CourseOfNumber < 0)
         {
-            throw new CourseException("Invalid coursenumber");
+            throw new CourseInvalidException("Invalid coursenumber");
         }
 
         var groups = _groups.Where(g => int.Parse(g.NameOfGroup.NameGroup[2].ToString()).Equals(courseNumber.CourseOfNumber));
