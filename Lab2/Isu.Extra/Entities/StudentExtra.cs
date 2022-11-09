@@ -2,27 +2,27 @@
 
 namespace Isu.Extra.Entities;
 
-public abstract class DecoratorStudent : Student
+public class DecoratorStudent : Student
 {
-    private GroupExtra _group;
-    public DecoratorStudent(Group group, string nameOfStudent, int id, GroupExtra groupExtra)
+    private Student _student;
+    public DecoratorStudent(Group group, string nameOfStudent, int id, Student student)
         : base(group, nameOfStudent, id)
     {
-        this._group = groupExtra;
+        this._student = student;
     }
 }
 
 public class StudentExtra : DecoratorStudent
 {
-    public StudentExtra(Student student, GroupExtra groupExtra, Ognp ognp)
-        : base(student.Group, student.NameOfStudent, student.ID, groupExtra)
+    private Student _student;
+    private Ognp _ognp1 = new Ognp();
+    private Ognp _ognp2 = new Ognp();
+    public StudentExtra(Student student)
+        : base(student.Group, student.NameOfStudent, student.ID, student)
     {
-        Ognp = ognp;
-        GroupExtra = groupExtra;
-        ognp.ListStudent.Add(this);
+        _student = student;
     }
 
-    public GroupExtra GroupExtra { get; }
-
-    public Ognp Ognp { get; internal set; }
+    public Ognp Ognp1 { get; internal set; }
+    public Ognp Ognp2 { get; internal set; }
 }

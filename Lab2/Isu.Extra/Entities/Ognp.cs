@@ -3,25 +3,41 @@ using Isu.Extra.Moduls;
 
 namespace Isu.Extra.Entities;
 
-public class Ognp
+public class Ognp : IEquatable<Ognp>
 {
-    private readonly List<OgnpSubject> _listOgnpSubjects = new List<OgnpSubject>();
     private readonly List<StudentExtra> _listStudent = new List<StudentExtra>();
 
-    public Ognp(string flow, List<OgnpSubject> listOgnpSubjects)
+    public Ognp(char flow, UniversitySubject ognpSubject)
     {
-        if (!listOgnpSubjects.Any())
-        {
-            throw new OgnpSubjectException("List subject for ognp is empty");
-        }
-
         Flow = flow;
-        _listOgnpSubjects = _listOgnpSubjects.Concat(listOgnpSubjects).ToList();
+        OgnpSubject = ognpSubject;
     }
+
+    internal Ognp() { }
 
     public List<StudentExtra> ListStudent => _listStudent;
 
-    public string Flow { get; }
+    public char Flow { get; }
 
-    public List<OgnpSubject> ListOgnpSubjects => _listOgnpSubjects;
+    public UniversitySubject OgnpSubject { get; }
+
+    public bool Equals(Ognp other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return Equals(OgnpSubject, other.OgnpSubject) && Flow == other.Flow;
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != this.GetType()) return false;
+        return Equals((Ognp)obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(OgnpSubject, Flow);
+    }
 }
