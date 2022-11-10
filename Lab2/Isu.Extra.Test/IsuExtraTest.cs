@@ -1,5 +1,6 @@
 ﻿using Isu.Entities;
 using Isu.Extra.Entities;
+using Isu.Extra.Exceptions;
 using Isu.Extra.Moduls;
 using Isu.Extra.Services;
 using Isu.Models;
@@ -9,14 +10,18 @@ namespace Isu.Extra.Test;
 
 public class IsuExtraTest
 {
-    [Fact]
-    public void Mytest1()
-    {
-        TimeTable timeTable = new TimeTable();
-        timeTable.Add(new UniversitySubject("Papi", new DateTime(2022, 1, 1, 13, 30, 0), "Dmitriy", "322"));
-        timeTable.Add(new UniversitySubject("Mami", new DateTime(2022, 1, 1, 16, 00, 0), "Dmitriy", "322"));
+    private IsuExtraService isu = new IsuExtraService();
+    private TimeTable timeTable = new TimeTable();
 
-        IsuExtraService isu = new IsuExtraService();
+    public IsuExtraTest()
+    {
+        timeTable.Add(new UniversitySubject("Art", new DateTime(2022, 1, 1, 13, 30, 0), "Dmitriy", "322"));
+        timeTable.Add(new UniversitySubject("Music", new DateTime(2022, 1, 1, 16, 00, 0), "Dmitriy", "322"));
+    }
+
+    [Fact]
+    public void TestMoreMethods()
+    {
         var group = isu.AddGroup(new GroupName("M3108"));
         var group1 = isu.AddGroup(new GroupName("P3108"));
         var student = isu.AddStudent(group, "Andrey");
@@ -40,15 +45,10 @@ public class IsuExtraTest
     [Fact]
     public void ChangeStudentExtra()
     {
-        TimeTable timeTable = new TimeTable();
-        timeTable.Add(new UniversitySubject("Papi", new DateTime(2022, 1, 1, 13, 30, 0), "Dmitriy", "322"));
-        timeTable.Add(new UniversitySubject("Mami", new DateTime(2022, 1, 1, 16, 00, 0), "Dmitriy", "322"));
-
-        IsuExtraService isu = new IsuExtraService();
         var group1 = isu.AddGroup(new GroupName("M3108"));
         var group2 = isu.AddGroup(new GroupName("P3108"));
         var student = isu.AddStudent(group1, "Andrey");
-        var ognp1 = isu.AddOgnp('K', new UniversitySubject("Math", new DateTime(2022, 1, 1, 13, 30, 0), "Dmitriy", "322"));
+        var ognp1 = isu.AddOgnp('K', new UniversitySubject("Math", new DateTime(2022, 1, 1, 19, 30, 0), "Dmitriy", "322"));
 
         var groupExtra1 = isu.AddTimeTable(group1, timeTable);
         var groupExtra2 = isu.AddTimeTable(group2, timeTable);
@@ -59,13 +59,8 @@ public class IsuExtraTest
     }
 
     [Fact]
-    public void StudentsDoNotHaveOgnp()
+    public void StudentsDoNotHaveOgnpAndStudentInOgnp()
     {
-        TimeTable timeTable = new TimeTable();
-        timeTable.Add(new UniversitySubject("Papi", new DateTime(2022, 1, 1, 13, 30, 0), "Dmitriy", "322"));
-        timeTable.Add(new UniversitySubject("Mami", new DateTime(2022, 1, 1, 16, 00, 0), "Dmitriy", "322"));
-
-        IsuExtraService isu = new IsuExtraService();
         var group = isu.AddGroup(new GroupName("M3108"));
         var ognp1 = isu.AddOgnp('K', new UniversitySubject("Math", new DateTime(2022, 1, 1, 13, 30, 0), "Dmitriy", "322"));
         var groupExtra = isu.AddTimeTable(group, timeTable);
@@ -79,5 +74,22 @@ public class IsuExtraTest
         isu.RemovingTheOgnp(studentExtra1, ognp1.OgnpSubject);
         Assert.Equal(3, isu.ListStudentDoNotHaveOgnp(groupExtra).Count());
         Assert.Equal("Sveta", isu.ListStudentInTheOgnp(ognp1)[0].NameOfStudent);
+    }
+
+    [Fact]
+    public void IntersectionInTimeTable()
+    {
+        Assert.Throws<IntersectionException>(() =>
+            timeTable.Add(new UniversitySubject("Math", new DateTime(2022, 1, 1, 13, 45, 0), "Dmitriy", "322")));
+    }
+
+    [Fact]
+    public void IntersectionOgnpWithTimeTable()
+    {
+        var group = isu.AddGroup(new GroupName("M3108"));
+        var ognp = isu.AddOgnp('K', new UniversitySubject("Math", new DateTime(2022, 1, 1, 13, 30, 0), "Dmitriy", "322"));
+        var student = isu.AddStudent(group, "Andrey");
+        var groupExtra = isu.AddTimeTable(group, timeTable);
+        Assert.Throws<IntersectionException>(() => isu.RegistrationToOgnp(student, ognp.OgnpSubject));
     }
 }

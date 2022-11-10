@@ -28,6 +28,13 @@ public class IsuExtraService : IIsuService
 
     public StudentExtra RegistrationToOgnp(Student student, UniversitySubject ognpSubject)
     {
+        var studentExtra = _listAllStudentExtra.Where(s => s.ID.Equals(student.ID)).FirstOrDefault();
+        var groupExtraStudent = _listGroupExtra.Where(g => g.ListStudentExtra.Contains(studentExtra)).FirstOrDefault();
+        if (CheckingIntersectionTimeTableAndOgnp(groupExtraStudent, ognpSubject))
+        {
+            throw new IntersectionException("Intersection Ognp And TimeTable");
+        }
+
         var findOgnp = FindOgnp(ognpSubject);
         if (student.Group.NameOfGroup.NameGroup[0] == findOgnp.Flow)
         {
@@ -35,7 +42,6 @@ public class IsuExtraService : IIsuService
                 "The student signed up for the start-up of his faculty");
         }
 
-        var studentExtra = _listAllStudentExtra.Where(s => s.ID.Equals(student.ID)).FirstOrDefault();
         studentExtra.Ognp1 = findOgnp;
         findOgnp.ListStudent.Add(studentExtra);
         return studentExtra;
@@ -44,6 +50,12 @@ public class IsuExtraService : IIsuService
     public StudentExtra RegistrationToOgnp(StudentExtra studentExtra, UniversitySubject ognpSubject)
     {
         var findOgnp = FindOgnp(ognpSubject);
+        var groupExtraStudent = _listGroupExtra.Where(g => g.ListStudentExtra.Contains(studentExtra)).FirstOrDefault();
+        if (CheckingIntersectionTimeTableAndOgnp(groupExtraStudent, ognpSubject))
+        {
+            throw new IntersectionException("Intersection Ognp And TimeTable");
+        }
+
         if (studentExtra.Group.NameOfGroup.NameGroup[0] == findOgnp.Flow)
         {
             throw new RegistrationOgnpOfStudentFacultyException(
@@ -182,5 +194,15 @@ public class IsuExtraService : IIsuService
     {
         return _listOgnp.Where(s => s.OgnpSubject.Equals(ognpSubject)).FirstOrDefault() ??
                throw new NotFindOgnpException("Ognp was not find");
+    }
+
+    private bool CheckingIntersectionTimeTableAndOgnp(GroupExtra groupExtra, UniversitySubject ognpSubject)
+    {
+        if (groupExtra.TTable.ListSubject.Where(s => ognpSubject.TDate >= s.TDate && ognpSubject.TDate <= s.EndingTime).Any())
+        {
+            return true;
+        }
+
+        return false;
     }
 }

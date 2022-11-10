@@ -12,7 +12,7 @@ public class TimeTable
     public TimeTable(List<UniversitySubject> listSubjects)
     {
         _listSubjects = listSubjects;
-        if (!listSubjects.Where(s => CheckingIntersictionSubject(s)).Any())
+        if (!listSubjects.Where(s => CheckingIntersectionSubject(s)).Any())
         {
             throw new IntersectionException("Error added ListSubject\nIntersection with the timetable");
         }
@@ -28,7 +28,7 @@ public class TimeTable
             throw new IntersectionException("Intersection in the timetable");
         }
 
-        if (CheckingIntersictionSubject(subject))
+        if (CheckingIntersectionSubject(subject))
         {
             throw new IntersectionException("Error added subject\nIntersection with the timetable");
         }
@@ -46,7 +46,7 @@ public class TimeTable
         _listSubjects.Remove(subject);
     }
 
-    private bool CheckingIntersictionSubject(UniversitySubject subject)
+    private bool CheckingIntersectionSubject(UniversitySubject subject)
     {
         if (_listSubjects.Where(s => subject.TDate > s.TDate && subject.TDate < s.EndingTime).Any())
         {
