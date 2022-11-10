@@ -62,7 +62,7 @@ public class IsuExtraTest
     public void StudentsDoNotHaveOgnpAndStudentInOgnp()
     {
         var group = isu.AddGroup(new GroupName("M3108"));
-        var ognp1 = isu.AddOgnp('K', new UniversitySubject("Math", new DateTime(2022, 1, 1, 13, 30, 0), "Dmitriy", "322"));
+        var ognp1 = isu.AddOgnp('K', new UniversitySubject("Math", new DateTime(2022, 1, 1, 10, 30, 0), "Dmitriy", "322"));
         var groupExtra = isu.AddTimeTable(group, timeTable);
 
         var student1 = isu.AddStudent(group, "Andrey");
