@@ -11,11 +11,12 @@ public class TimeTable
 
     public TimeTable(List<UniversitySubject> listSubjects)
     {
-        _listSubjects = listSubjects;
         if (!listSubjects.Where(s => CheckingIntersectionSubject(s)).Any())
         {
             throw new IntersectionException("Error added ListSubject\nIntersection with the timetable");
         }
+
+        _listSubjects = listSubjects;
     }
 
     public List<UniversitySubject> ListSubject => _listSubjects;

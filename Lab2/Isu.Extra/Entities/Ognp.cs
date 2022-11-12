@@ -15,11 +15,9 @@ public class Ognp : IEquatable<Ognp>
 
     internal Ognp() { }
 
-    public List<StudentExtra> ListStudent => _listStudent;
-
     public char Flow { get; }
-
     public UniversitySubject OgnpSubject { get; }
+    internal List<StudentExtra> ListStudent => _listStudent;
 
     public bool Equals(Ognp other)
     {

@@ -198,11 +198,7 @@ public class IsuExtraService : IIsuService
 
     private bool CheckingIntersectionTimeTableAndOgnp(GroupExtra groupExtra, UniversitySubject ognpSubject)
     {
-        if (groupExtra.TTable.ListSubject.Where(s => ognpSubject.TDate >= s.TDate && ognpSubject.TDate <= s.EndingTime).Any())
-        {
-            return true;
-        }
-
-        return false;
+        return groupExtra.TTable.ListSubject.
+            Where(s => ognpSubject.TDate >= s.TDate && ognpSubject.TDate <= s.EndingTime).Any();
     }
 }

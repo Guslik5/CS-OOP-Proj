@@ -8,6 +8,10 @@ public class UniversitySubject : IEquatable<UniversitySubject>
     private DateTime _endingTime;
     public UniversitySubject(string nameSubject, DateTime tDate, string nameTeacher, string classNumber)
     {
+        ArgumentNullException.ThrowIfNull(nameSubject, "Subject name is null");
+        ArgumentNullException.ThrowIfNull(tDate, "tDate is null");
+        ArgumentNullException.ThrowIfNull(nameTeacher, "Teacher name is null");
+        ArgumentNullException.ThrowIfNull(classNumber, "Class number is null");
         (Name, TDate, NameTeacher, ClassNumber) = (nameSubject, tDate, nameTeacher, classNumber);
         _endingTime = tDate.AddHours(1).AddMinutes(30);
     }
