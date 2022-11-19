@@ -7,27 +7,28 @@ public class SingleAlgorithm : IAlgorithm
 {
     public SingleAlgorithm()
     {
-        Arhiver arhiver = new Arhiver();
-        Arhiver = arhiver;
+        Arсhiver arсhiver = new Arсhiver();
+        Arсhiver = arсhiver;
     }
 
-    private Arhiver Arhiver { get; }
+    public string Type => nameof(SingleAlgorithm);
+    private Arсhiver Arсhiver { get; }
     public List<Storage> CreateAlgo(List<BackupObj> listBackupObjs, IRepository repository, string pathDirRestorePoint)
     {
         List<Storage> listStorage = new List<Storage>();
-        using var zip = Arhiver.CreateZipArhive(repository.CurrentPath + "/" + pathDirRestorePoint + "/" + "arhive", repository);
+        using var zip = Arсhiver.CreateZipArсhive(repository.CurrentPath + "/" + pathDirRestorePoint + "/" + "arhive", repository);
         var storage = new Storage(repository.CurrentPath + "/" + pathDirRestorePoint + "/" + "arhive" + ".zip");
         listStorage.Add(storage);
         foreach (BackupObj backupObj in listBackupObjs)
         {
             if (repository.FileExists(backupObj.Path))
             {
-                Arhiver.ArhiveFile(zip, backupObj.Path, repository);
+                Arсhiver.ArсhiveFile(zip, backupObj.Path, repository);
             }
             else
             {
                 string defaultTest = repository.GetFileName(backupObj.Path);
-                Arhiver.ArhiveDir(zip, backupObj.Path, repository, defaultTest);
+                Arсhiver.ArсhiveDir(zip, backupObj.Path, repository, defaultTest);
             }
         }
 

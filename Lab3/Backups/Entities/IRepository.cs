@@ -4,6 +4,7 @@ namespace Backups.Entities;
 
 public interface IRepository
 {
+    public string Type { get; }
     string CurrentPath { get; }
     FileSystem FileSystem { get; }
     void CreateDir(string nameDir);

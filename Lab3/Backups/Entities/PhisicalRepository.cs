@@ -23,6 +23,7 @@ public class PhisicalRepository : IRepository
     }
 
     public FileSystem FileSystem { get; }
+    public string Type => nameof(PhisicalRepository);
     public string CurrentPath { get; }
 
     public void CreateDir(string nameDir)

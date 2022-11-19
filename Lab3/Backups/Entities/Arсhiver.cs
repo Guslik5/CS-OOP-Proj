@@ -3,16 +3,16 @@ using Zio;
 
 namespace Backups.Entities;
 
-public class Arhiver : IArhiver
+public class Arсhiver : IArсhiver
 {
-    public void ArhiveFile(ZipArchive zipArchive, string file, IRepository repository)
+    public void ArсhiveFile(ZipArchive zipArchive, string file, IRepository repository)
     {
         using var entryStream = zipArchive.CreateEntry(repository.GetFileName(file)).Open();
         using var fileStream = repository.FileSystem.OpenFile(file, FileMode.Open, FileAccess.Read);
         fileStream.CopyTo(entryStream);
     }
 
-    public void ArhiveDir(ZipArchive zipArchive, string file, IRepository repository, string currentDir)
+    public void ArсhiveDir(ZipArchive zipArchive, string file, IRepository repository, string currentDir)
     {
         var listFilesInDir = repository.FileSystem.EnumerateFileSystemEntries(file);
         var listFiles = listFilesInDir.Where(p => repository.FileExists(p.FullName));
@@ -27,12 +27,12 @@ public class Arhiver : IArhiver
         foreach (var dir in listDir)
         {
             currentDir += "/" + repository.GetFileName(dir.FullName);
-            ArhiveDir(zipArchive, dir.FullName, repository, currentDir);
+            ArсhiveDir(zipArchive, dir.FullName, repository, currentDir);
             currentDir = repository.GetDirName(currentDir);
         }
     }
 
-    public ZipArchive CreateZipArhive(string path, IRepository repository)
+    public ZipArchive CreateZipArсhive(string path, IRepository repository)
     {
         var fs = repository.FileSystem;
         var stream = fs.OpenFile(path + ".zip", FileMode.OpenOrCreate, FileAccess.Write);

@@ -16,6 +16,7 @@ public class MemoryRepository : IRepository
         FileSystem = _fs;
     }
 
+    public string Type => nameof(MemoryRepository);
     public string CurrentPath { get; }
     public FileSystem FileSystem { get; }
 

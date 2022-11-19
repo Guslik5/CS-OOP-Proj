@@ -45,6 +45,6 @@ public class BackupTask
         string pathName = "RestorePoint" + _backup.GetCountRestorePoint().ToString();
         Repository.CreateDir(pathName);
         listStorage = _backup.Config.Algorithm.CreateAlgo(_backup.Config.ListBackupObjs, Repository, pathName);
-        _backup.AddRestorePoint(listStorage);
+        _backup.AddRestorePoint(listStorage, DateTime.Now);
     }
 }

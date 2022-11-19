@@ -10,10 +10,10 @@ public class Backup
     internal List<RestorePoint> ListRestorePoint => _listRestorePoint;
     internal Config Config => _currentConfig;
 
-    public void AddRestorePoint(List<Storage> listStorage)
+    public void AddRestorePoint(List<Storage> listStorage, DateTime? dateTime)
     {
         ArgumentNullException.ThrowIfNull(listStorage, "listStorage is null");
-        _listRestorePoint.Add(new RestorePoint(listStorage));
+        _listRestorePoint.Add(new RestorePoint(listStorage, dateTime));
     }
 
     public int GetCountRestorePoint()
