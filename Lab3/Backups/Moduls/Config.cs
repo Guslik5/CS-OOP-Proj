@@ -1,4 +1,4 @@
-﻿using Backups.Entities;
+﻿using Backups.Algorithm;
 using Backups.Exceptions;
 
 namespace Backups.Moduls;
@@ -12,22 +12,22 @@ public class Config
     public List<BackupObj> ListBackupObjs => _listBackupObjs;
     internal IAlgorithm Algorithm => _algorithm;
 
-    public void AddFile(string path)
+    public void AddFile(BackupObj backupObj)
     {
-        ArgumentNullException.ThrowIfNull(path, "Path is null");
-        var obj = _listBackupObjs.Where(o => o.Path.Equals(path)).FirstOrDefault();
+        ArgumentNullException.ThrowIfNull(backupObj, "Path is null");
+        var obj = _listBackupObjs.Where(o => o.Equals(backupObj)).FirstOrDefault();
         if (obj is not null)
         {
             throw new FileAddedException("File has already been added");
         }
 
-        _listBackupObjs.Add(new BackupObj(path));
+        _listBackupObjs.Add(backupObj);
     }
 
-    public void RemoveFile(string path)
+    public void RemoveFile(BackupObj backupObj)
     {
-        ArgumentNullException.ThrowIfNull(path, "Path is null");
-        var removeObj = _listBackupObjs.Where(obj => obj.Path.Equals(path)).FirstOrDefault();
+        ArgumentNullException.ThrowIfNull(backupObj, "Path is null");
+        var removeObj = _listBackupObjs.Where(obj => obj.Path.Equals(backupObj.Path)).FirstOrDefault();
         if (removeObj is null)
         {
             throw new NotFoundFileException("File is not found");
@@ -36,18 +36,8 @@ public class Config
         _listBackupObjs.Remove(removeObj);
     }
 
-    public void ChangeAlgo(string algo)
+    public void ChangeAlgo(IAlgorithm algo)
     {
-        switch (algo)
-        {
-            case "single":
-                _algorithm = new SingleAlgorithm();
-                break;
-            case "split":
-                _algorithm = new SplitAlgorithm();
-                break;
-            default:
-                throw new InvalidAlgorithmException("Invalid name of Algorithm");
-        }
+        _algorithm = algo;
     }
 }

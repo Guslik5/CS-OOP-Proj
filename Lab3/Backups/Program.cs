@@ -1,4 +1,6 @@
-﻿using Zio;
+﻿using Backups.Algorithm;
+using Backups.Entities;
+using Backups.Moduls;
 using Zio.FileSystems;
 namespace Backups;
 
@@ -6,10 +8,15 @@ public class Program
 {
     public static void Main()
     {
-        /*var fs = new PhysicalFileSystem();
-        fs.CreateDirectory("/mnt/c/Users/Guslik/Desktop/test/testing");*/
-        var fsZip = new ZipArchiveFileSystem("C://Users/Guslik/Desktop/test/ZipArhive.zip");
-        fsZip.CreateFile("C://Users/Guslik/Desktop/test/ZipArhive.zip/text");
-        fsZip.WriteAllText("text", "Privet");
+        var backupTask = new BackupTask(new SingleAlgorithm(), new PhisicalRepository("/mnt/c/Users/Guslik/Desktop/test", "phisicalTask", new PhysicalFileSystem()));
+        backupTask.AddFile("/mnt/c/Users/Guslik/Desktop/FileForBackup/hello.txt");
+        backupTask.AddFile("/mnt/c/Users/Guslik/Desktop/FileForBackup/hello2.txt");
+        backupTask.Execute();
+        backupTask.AddFile("/mnt/c/Users/Guslik/Desktop/FileForBackup/good");
+        backupTask.ChangeAlgorithm(new SplitAlgorithm());
+        backupTask.Execute();
+        var backupTask2 = new BackupTask(new SingleAlgorithm(), new PhisicalRepository("/mnt/c/Users/Guslik/Desktop/test", "phisicalTask2", new PhysicalFileSystem()));
+        backupTask2.AddFile("/mnt/c/Users/Guslik/Desktop/university/2 курс");
+        backupTask2.Execute();
     }
 }
