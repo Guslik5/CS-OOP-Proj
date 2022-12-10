@@ -18,7 +18,7 @@ public class InfoBanks
 
         foreach (Bank bank in centreBank.Banks)
         {
-            var helperDebit = centreBank.Banks.Where(b => b.Name.Equals(bank.Name))
+            HelperforConfig helperDebit = centreBank.Banks.Where(b => b.Name.Equals(bank.Name))
                 .SelectMany(b => b.Configs)
                     .Where(c => c.NameConfig.Equals("Debit"))
                         .SelectMany(c => c.ListAmountsAndPercentages).FirstOrDefault();

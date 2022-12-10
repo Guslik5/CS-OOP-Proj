@@ -35,7 +35,7 @@ public class TestBank
         centreBankSevice.TakeOffInATM(user2, bank, "Credit", 1000);
         centreBankSevice.AccrueInterestCredit();
 
-        centreBankSevice.Transaction(account1, account2, 1000);
+        CentreBank.Transaction(account1, account2, 1000);
         Assert.Equal(400, account1.Money);
         Assert.Equal(2500, account2.Money);
     }

@@ -5,6 +5,7 @@ public class TimeManager
     private CentreBank _centreBank;
     public TimeManager(CentreBank centreBank)
     {
+        ArgumentNullException.ThrowIfNull(centreBank);
         _centreBank = centreBank;
     }
 

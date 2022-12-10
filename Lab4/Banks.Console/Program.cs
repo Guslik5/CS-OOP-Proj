@@ -1,7 +1,4 @@
-﻿using Banks.Entities;
-using Banks.Interfaces;
-using Banks.Moduls;
-using Banks.Services;
+﻿using Banks.Services;
 using Spectre.Console;
 namespace Banks.Console;
 
@@ -10,11 +7,11 @@ public class Program
     public static void Main()
     {
         var centreBank = new CentreBank();
-        TimeManager timeManager = new TimeManager(centreBank);
+        var timeManager = new TimeManager(centreBank);
         var panel = new Panel(new Markup("Welcome to the bank system", Style.Plain.Foreground(Color.Aqua).Decoration(Decoration.SlowBlink)));
         panel.Padding = new Padding(75, 2, 75, 2);
         AnsiConsole.Write(panel);
-        var table = new Table().Centered();
+        Table table = new Table().Centered();
 
         AnsiConsole.Live(table)
             .Start(ctx =>
@@ -43,19 +40,24 @@ public class Program
             .Start(ctx =>
             {
                 // Define tasks
-                var task1 = ctx.AddTask("[green]Loading Bank System[/]");
+                ProgressTask task1 = ctx.AddTask("[green]Loading Bank System[/]");
                 while (!ctx.IsFinished)
                 {
                     task1.Increment(0.00001);
                 }
             });
-        var flag = true;
+        bool flag = true;
         while (flag)
         {
-            AnsiConsole.WriteLine("Date and time in system" + System.Environment.NewLine + "Time: " + centreBank.TimeInSystem.Hour + ":" + centreBank.TimeInSystem.Minute + ":" + centreBank.TimeInSystem.Second + System.Environment.NewLine + "Date: " + centreBank.TimeInSystem.Day + "." + centreBank.TimeInSystem.Month + "." + centreBank.TimeInSystem.Year);
-            var command = AnsiConsole.Prompt(
+            var panelWithDate = new Panel("Date and time in system" + Environment.NewLine + "Time: " +
+                                          centreBank.TimeInSystem.Hour + ":" + centreBank.TimeInSystem.Minute + ":" +
+                                          centreBank.TimeInSystem.Second + Environment.NewLine + "Date: " +
+                                          centreBank.TimeInSystem.Day + "." + centreBank.TimeInSystem.Month + "." +
+                                          centreBank.TimeInSystem.Year);
+            AnsiConsole.Write(panelWithDate);
+            string command = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
-                    .Title(new string(System.Environment.NewLine + "[bold yellow]Main Menu[/]"))
+                    .Title(new string(Environment.NewLine + "[bold yellow]Main Menu[/]"))
                     .PageSize(12)
                     .MoreChoicesText("[grey](Move up and down to reveal more command)[/]")
                     .AddChoices(new[]

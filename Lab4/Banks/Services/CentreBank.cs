@@ -36,8 +36,50 @@ public class CentreBank : ICentreBank
         }
     }
 
+    public static bool Transaction(IAccount accountFrom, IAccount accountTo, decimal money)
+    {
+        ArgumentNullException.ThrowIfNull(accountFrom);
+        ArgumentNullException.ThrowIfNull(accountTo);
+        var context = new Context(accountFrom, accountTo, money);
+        var takeOff = new Handler(new TakeOffCommand(context));
+        var commission = new Handler(new CommissionCommand(context));
+        var replenish = new Handler(new ReplenishCommand(context));
+        return new Chain(takeOff, commission, replenish).Execute();
+    }
+
+    public static bool Transaction(User userFrom, string bankFrom, string userFromAccountName, User userTo, string bankTo, string userToAccountName, decimal money)
+    {
+        if (string.IsNullOrEmpty(bankFrom) || string.IsNullOrEmpty(bankTo))
+        {
+            throw new BankNameForTransactionException("Bank name is null or empty");
+        }
+
+        var currentAccountFrom = userFrom.ListBanksAccounts
+            .FirstOrDefault(l => l.NameAccount.Equals(userFromAccountName) && l.Bank.Name.Equals(bankFrom));
+        var currentAccountTo = userTo.ListBanksAccounts
+            .FirstOrDefault(l => l.NameAccount.Equals(userToAccountName) && l.Bank.Name.Equals(bankTo));
+        if (currentAccountFrom is null || currentAccountTo is null)
+        {
+            throw new AccountForTransactionException("Account is null");
+        }
+
+        if ((userFrom.Passport is null || userFrom.Address is null) & money > currentAccountFrom.Bank.MaxSumIfUserNotTrusted)
+        {
+            throw new UntrustedUserException("Untrusted user is trying to instill a limit");
+        }
+
+        ArgumentNullException.ThrowIfNull(currentAccountFrom);
+        ArgumentNullException.ThrowIfNull(currentAccountTo);
+        var context = new Context(currentAccountFrom, currentAccountTo, money);
+        var takeOff = new Handler(new TakeOffCommand(context));
+        var commission = new Handler(new CommissionCommand(context));
+        var replenish = new Handler(new ReplenishCommand(context));
+        return new Chain(takeOff, commission, replenish).Execute();
+    }
+
     public Bank AddBank(string name, List<IConfig> configs, decimal percentCommission, decimal defaultPercentDeposit, decimal limitCreditAccount, decimal maxSumIfUserNotTrusted)
     {
+        ArgumentNullException.ThrowIfNull(configs);
         if (_banks.Where(b => b.Name.Equals(name)).Any())
         {
             throw new BankCreatedException("Bank Created");
@@ -50,6 +92,9 @@ public class CentreBank : ICentreBank
 
     public IAccount UserOpenAccount(User user, Bank bank, IAccount account)
     {
+        ArgumentNullException.ThrowIfNull(user);
+        ArgumentNullException.ThrowIfNull(bank);
+        ArgumentNullException.ThrowIfNull(account);
         if (user.ListBanksAccounts.Where(a => a.Bank.Name.Equals(bank.Name) && a.Config.NameConfig.Equals(account.NameAccount)).Any())
         {
             throw new UserSubscribeToBankException("This user has already open account in this bank");
@@ -68,9 +113,11 @@ public class CentreBank : ICentreBank
 
     public void UserRemoveAccount(User user, Bank bank, IAccount account)
     {
+        ArgumentNullException.ThrowIfNull(user);
+        ArgumentNullException.ThrowIfNull(bank);
+        ArgumentNullException.ThrowIfNull(account);
         var correntAccount = user.ListBanksAccounts
-            .Where(a => a.Bank.Name.Equals(bank.Name) && a.Config.NameConfig.Equals(account.NameAccount))
-            .FirstOrDefault();
+            .FirstOrDefault(a => a.Bank.Name.Equals(bank.Name) && a.Config.NameConfig.Equals(account.NameAccount));
 
         if (correntAccount is null)
         {
@@ -88,6 +135,8 @@ public class CentreBank : ICentreBank
 
     public void ChangeConfig(Bank bank, IConfig config)
     {
+        ArgumentNullException.ThrowIfNull(bank);
+        ArgumentNullException.ThrowIfNull(config);
         var currentConfig = bank.Configs.Where(c => c.NameConfig.Equals(config.NameConfig)).FirstOrDefault();
         if (currentConfig is null)
         {
@@ -109,7 +158,7 @@ public class CentreBank : ICentreBank
 
         foreach (IAccount account in listAllAccount)
         {
-            foreach (var helper in account.Config.ListAmountsAndPercentages)
+            foreach (HelperforConfig helper in account.Config.ListAmountsAndPercentages)
             {
                 if ((-1 * account.Money) >= helper.First & account.Money < helper.Last)
                 {
@@ -125,10 +174,10 @@ public class CentreBank : ICentreBank
             .ToList().SelectMany(a => a.ListBanksAccounts
             .Where(account => account.NameAccount.Equals("Debit") || account.NameAccount.Equals("Deposit")))
             .ToList();
-        List<IAccount> listAccountWithoutHelper = new List<IAccount>();
+        var listAccountWithoutHelper = new List<IAccount>();
         foreach (IAccount account in listAllAccount)
         {
-            var flag = true;
+            bool flag = true;
             foreach (var helper in account.Config.ListAmountsAndPercentages)
             {
                 if (account.Money >= helper.First && account.Money < helper.Last)
@@ -152,9 +201,10 @@ public class CentreBank : ICentreBank
 
     public void ReplenishInATM(User user, Bank bank, string account, decimal value)
     {
+        ArgumentNullException.ThrowIfNull(user);
+        ArgumentNullException.ThrowIfNull(bank);
         var correntAccount = user.ListBanksAccounts
-            .Where(a => a.Bank.Name.Equals(bank.Name) && a.NameAccount.Equals(account))
-            .FirstOrDefault();
+            .FirstOrDefault(a => a.Bank.Name.Equals(bank.Name) && a.NameAccount.Equals(account));
 
         if (correntAccount is null)
         {
@@ -166,7 +216,9 @@ public class CentreBank : ICentreBank
 
     public void TakeOffInATM(User user, Bank bank, string account, decimal money)
     {
-        var currentAccount = user.ListBanksAccounts
+        ArgumentNullException.ThrowIfNull(user);
+        ArgumentNullException.ThrowIfNull(bank);
+        IAccount currentAccount = user.ListBanksAccounts
             .FirstOrDefault(a => a.Bank.Name.Equals(bank.Name) && a.NameAccount.Equals(account));
         if (currentAccount is null)
         {
@@ -189,37 +241,6 @@ public class CentreBank : ICentreBank
         }
 
         currentAccount.TakeOff(money);
-    }
-
-    public bool Transaction(IAccount accountFrom, IAccount accountTo, decimal money)
-    {
-        ArgumentNullException.ThrowIfNull(accountFrom);
-        ArgumentNullException.ThrowIfNull(accountTo);
-        var context = new Context(accountFrom, accountTo, money);
-        var takeOff = new Handler(new TakeOffCommand(context));
-        var commission = new Handler(new CommissionCommand(context));
-        var replenish = new Handler(new ReplenishCommand(context));
-        return new Chain(takeOff, commission, replenish).Execute();
-    }
-
-    public bool Transaction(User userFrom, string bankFrom, string userFromAccountName, User userTo, string bankTo, string userToAccountName, decimal money)
-    {
-        var currentAccountFrom = userFrom.ListBanksAccounts
-            .FirstOrDefault(l => l.NameAccount.Equals(userFromAccountName) && l.Bank.Name.Equals(bankFrom));
-        var currentAccountTo = userTo.ListBanksAccounts
-            .FirstOrDefault(l => l.NameAccount.Equals(userToAccountName) && l.Bank.Name.Equals(bankTo));
-        if ((userFrom.Passport is null || userFrom.Address is null) & money > currentAccountFrom.Bank.MaxSumIfUserNotTrusted)
-        {
-            throw new UntrustedUserException("Untrusted user is trying to instill a limit");
-        }
-
-        ArgumentNullException.ThrowIfNull(currentAccountFrom);
-        ArgumentNullException.ThrowIfNull(currentAccountTo);
-        var context = new Context(currentAccountFrom, currentAccountTo, money);
-        var takeOff = new Handler(new TakeOffCommand(context));
-        var commission = new Handler(new CommissionCommand(context));
-        var replenish = new Handler(new ReplenishCommand(context));
-        return new Chain(takeOff, commission, replenish).Execute();
     }
 
     public void DisplayMessage(string message) => Console.WriteLine(message);

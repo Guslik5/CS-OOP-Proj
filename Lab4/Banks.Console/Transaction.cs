@@ -20,6 +20,6 @@ public class Transaction
             .FirstOrDefault(u => u.GuidUser.Equals(giudUserFrom));
         User currentUserTo = centreBank.Banks.SelectMany(b => b.ListUsers)
             .FirstOrDefault(u => u.GuidUser.Equals(giudUserTo));
-        centreBank.Transaction(currentUserFrom, bankFrom, accountFrom, currentUserTo, bankTo, accountTo, money);
+        CentreBank.Transaction(currentUserFrom, bankFrom, accountFrom, currentUserTo, bankTo, accountTo, money);
     }
 }

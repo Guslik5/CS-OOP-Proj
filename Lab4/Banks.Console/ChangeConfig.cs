@@ -1,4 +1,5 @@
-﻿using Banks.Moduls;
+﻿using Banks.Entities;
+using Banks.Moduls;
 using Banks.Services;
 using Spectre.Console;
 
@@ -10,7 +11,7 @@ public class ChangeConfig
     {
         string nameBank = AnsiConsole.Ask<string>("Enter the name of the bank");
         string configName = AnsiConsole.Ask<string>("Enter the name config");
-        var currentBank = centreBank.Banks.FirstOrDefault(b => b.Name.Equals(nameBank));
+        Bank currentBank = centreBank.Banks.FirstOrDefault(b => b.Name.Equals(nameBank));
         switch (configName)
         {
             case "Debit":
@@ -28,7 +29,7 @@ public class ChangeConfig
                 centreBank.ChangeConfig(currentBank, configCredit);
                 break;
             case "Deposit":
-                var flagForDepositConfig = true;
+                bool flagForDepositConfig = true;
                 var listDeposite = new List<HelperforConfig>();
                 decimal defaultPercentDeposit = AnsiConsole.Ask<decimal>("Enter the [blue]default[/] percentage on the [blue]Deposit[/] account balance");
                 while (flagForDepositConfig)

@@ -1,5 +1,4 @@
-﻿using Banks.Entities;
-using Banks.Interfaces;
+﻿using Banks.Interfaces;
 using Banks.Moduls;
 using Banks.Services;
 using Spectre.Console;
@@ -26,7 +25,7 @@ public class CreateBank
         var configCredit = new CreditConfig(new List<HelperforConfig>() { new HelperforConfig(firstCredit, lastCredit, percentCredit) });
         AnsiConsole.MarkupLine("[green]Config for Credit ready[/]");
 
-        var flagForDepositConfig = true;
+        bool flagForDepositConfig = true;
         var listDeposite = new List<HelperforConfig>();
         decimal defaultPercentDeposit = AnsiConsole.Ask<decimal>("Enter the [blue]default[/] percentage on the [blue]Deposit[/] account balance");
         while (flagForDepositConfig)
