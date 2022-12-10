@@ -145,6 +145,13 @@ public class CentreBank : ICentreBank
 
         bank.Configs.Remove(currentConfig);
         bank.Configs.Add(config);
+        var allAccountWithOldConfig = bank.ListUsers.SelectMany(u => u.ListBanksAccounts)
+            .Where(a => a.NameAccount.Equals(config.NameConfig));
+        foreach (IAccount account in allAccountWithOldConfig)
+        {
+            account.Config = config;
+        }
+
         this.Notify += DisplayMessage;
         Notify?.Invoke($"{config.NameConfig} Config Changed in {bank.Name}");
     }
@@ -195,7 +202,7 @@ public class CentreBank : ICentreBank
 
         foreach (IAccount account in listAccountWithoutHelper)
         {
-            account.Replenish(account.Money * (account.Bank.DefaultPercentDeposite / 100));
+            account.Replenish(account.Money * (account.Bank.DefaultPercentDeposite / 100 / 365));
         }
     }
 

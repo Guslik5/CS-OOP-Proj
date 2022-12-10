@@ -24,20 +24,19 @@ public class CreateBank
         decimal lastCredit = decimal.MaxValue;
         var configCredit = new CreditConfig(new List<HelperforConfig>() { new HelperforConfig(firstCredit, lastCredit, percentCredit) });
         AnsiConsole.MarkupLine("[green]Config for Credit ready[/]");
-
-        bool flagForDepositConfig = true;
         var listDeposite = new List<HelperforConfig>();
         decimal defaultPercentDeposit = AnsiConsole.Ask<decimal>("Enter the [blue]default[/] percentage on the [blue]Deposit[/] account balance");
-        while (flagForDepositConfig)
+        while (true)
         {
+            if (!AnsiConsole.Confirm("Do you want to continue entering gaps for the debit account?"))
+            {
+                break;
+            }
+
             decimal percentDeposit = AnsiConsole.Ask<decimal>("Enter the percentage on the [blue]Deposit[/] account balance");
             decimal firstDeposit = AnsiConsole.Ask<decimal>("Enter the beginning of the gap on the Deposit account balance");
             decimal lastDeposit = AnsiConsole.Ask<decimal>("Enter ending of the gap on the Deposit account balance");
             listDeposite.Add(new HelperforConfig(firstDeposit, lastDeposit, percentDeposit));
-            if (!AnsiConsole.Confirm("Do you want to continue entering gaps for the debit account?"))
-            {
-                flagForDepositConfig = false;
-            }
         }
 
         var configDeposit = new DepositConfig(listDeposite);
