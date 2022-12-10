@@ -11,5 +11,5 @@ public interface IAccount
     public decimal Money { get; }
 
     void Replenish(decimal value);
-    public void TakeOff(decimal value);
+    void TakeOff(decimal value);
 }

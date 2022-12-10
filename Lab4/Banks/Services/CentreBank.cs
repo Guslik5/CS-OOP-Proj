@@ -80,6 +80,11 @@ public class CentreBank : ICentreBank
     public Bank AddBank(string name, List<IConfig> configs, decimal percentCommission, decimal defaultPercentDeposit, decimal limitCreditAccount, decimal maxSumIfUserNotTrusted)
     {
         ArgumentNullException.ThrowIfNull(configs);
+        if (maxSumIfUserNotTrusted < 0)
+        {
+            throw new BankCreatedException("maxSumIfUserNotTrusted < 0");
+        }
+
         if (_banks.Where(b => b.Name.Equals(name)).Any())
         {
             throw new BankCreatedException("Bank Created");
@@ -102,7 +107,7 @@ public class CentreBank : ICentreBank
 
         if (!bank.ListUsers.Contains(user))
         {
-            bank.ListUsers.Add(user);
+            bank.Add(user);
         }
 
         account.Bank = bank;
@@ -129,7 +134,7 @@ public class CentreBank : ICentreBank
             throw new AccountRemoveWithMoneyException("There are money on the account");
         }
 
-        bank.ListUsers.Remove(user);
+        bank.Remove(user);
         user.ListBanksAccounts.Remove(correntAccount);
     }
 
@@ -152,7 +157,7 @@ public class CentreBank : ICentreBank
             account.Config = config;
         }
 
-        this.Notify += DisplayMessage;
+        Notify += DisplayMessage;
         Notify?.Invoke($"{config.NameConfig} Config Changed in {bank.Name}");
     }
 
@@ -165,12 +170,9 @@ public class CentreBank : ICentreBank
 
         foreach (IAccount account in listAllAccount)
         {
-            foreach (HelperforConfig helper in account.Config.ListAmountsAndPercentages)
+            foreach (var helper in account.Config.ListAmountsAndPercentages.Where(helper => (-1 * account.Money) >= helper.First & account.Money < helper.Last))
             {
-                if ((-1 * account.Money) >= helper.First & account.Money < helper.Last)
-                {
-                    account.TakeOff(account.Money * (helper.Percent / 100 / 12));
-                }
+                account.TakeOff(account.Money * (helper.Percent / 100 / 12));
             }
         }
     }

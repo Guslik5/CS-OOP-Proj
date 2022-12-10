@@ -7,9 +7,10 @@ namespace Banks.Entities;
 
 public class Bank
 {
-    private readonly List<User> _listUsers = new List<User>();
+    private readonly List<User> _listUsers;
     public Bank(string name, List<IConfig> configs, decimal percentComission, decimal defaultPercentDeposite, decimal limitCreditAccount, decimal maxSumIfUserNotTrusted)
     {
+        _listUsers = new List<User>();
         if (percentComission < 0 || defaultPercentDeposite < 0 || limitCreditAccount < 0)
         {
             throw new PerсentException("Invalid percent");
@@ -34,5 +35,15 @@ public class Bank
     public decimal LimitCreditAccount { get; }
     public decimal DefaultPercentDeposite { get; }
     public string Name { get; }
-    public List<User> ListUsers => _listUsers;
+    public IReadOnlyCollection<User> ListUsers => _listUsers;
+
+    internal void Add(User user)
+    {
+        _listUsers.Add(user);
+    }
+
+    internal void Remove(User user)
+    {
+        _listUsers.Add(user);
+    }
 }
